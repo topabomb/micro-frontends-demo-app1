@@ -6,16 +6,19 @@ import router from './router'
 import singleSpaVue, { type SingleSpaProps } from 'single-spa-vue'
 type Props = {
   name: string
+  container: HTMLElement
   basePath: string
 }
 const vueLifecycles = singleSpaVue({
   createApp,
   appOptions: {
     render() {
-      const { name, basePath } = this as unknown as Props
+      const { name, container, basePath } = this as unknown as Props
+      //h的额外参数非必须，这里演示把host的参数传递给remote的根元素
       return h(App, {
-        name: name,
-        basePath: basePath,
+        remoteName: name,
+        mountContainer:container.id,
+        remotePath: basePath,
       })
     },
   },
@@ -37,13 +40,15 @@ if (import.meta.env.MODE === 'development') {
 }
 export const bootstrap = vueLifecycles.bootstrap
 export const mount = async (prop: SingleSpaProps) => {
+  //在这里指定domElement为root传递过来的元素
   vueLifecycles
-    .mount(prop)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .mount({ domElement: (prop as unknown as any).container, ...prop })
     .then((v) => {
-      console.log(v)
+      console.log(`mount event:`,v)
     })
     .catch((e) => {
-      console.error(e)
+      console.error(`mount error:`,e)
     })
 }
 export const unmount = vueLifecycles.unmount

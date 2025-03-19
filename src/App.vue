@@ -1,12 +1,18 @@
 <script setup lang="ts">
+import {defineProps} from "vue"
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
+const props = defineProps({
+  remoteName: String,
+  mountContainer: String,
+  remotePath:String
+})
 </script>
 
 <template>
   <header>
     <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
+    <h1>{{ props.remoteName }}</h1>
     <div class="wrapper">
       <HelloWorld msg="You did it!" />
 
